@@ -24,7 +24,7 @@ pip install pydllmanager
 1. First, you need to initialize a `DLLLoader` object by providing the path to your DLL file.
 
 ```python
-from pydllmanager import DLLLoader
+from pydllmanager import DLLLoader, ctypes_type
 
 dll_path = "path/to/your/dll/file.dll"
 loader = DLLLoader(dll_path)
@@ -33,21 +33,23 @@ loader = DLLLoader(dll_path)
 2. Then, you can load functions from the DLL using the `get_function` method:
 
 ```python
-add_func = loader.get_function('add', [ctypes.c_int, ctypes.c_int], ctypes.c_int)
+add_func = loader.get_function('add', [ctypes_type(int), ctypes_type(int)], ctypes_type(int))
 result = add_func(5, 3)
 print(result)  # Expected output: 8 (depends on the DLL function)
 ```
 
-### Using the `DllImprt` Decorator
+### Using the `include` Decorator
 
 The `DllImprt` decorator allows you to decorate functions to automatically load them from a DLL.
 
 ```python
-from pydllmanager import DllImprt
+from pydllmanager import LoaderLibrary
 
-@DllImprt("path/to/your/dll/file.dll")
-def add(a: int, b: int) -> int:
-    pass  # The function is loaded from the DLL automatically
+loader = LoaderLibrary("path/to/your/dll/file.dll")
+loader.load()
+
+@loader.include()
+def add(a: int, b: int) -> int: ... # The function is loaded from the DLL automatically
 
 result = add(5, 3)
 print(result)  # Expected output: 8
@@ -56,18 +58,20 @@ print(result)  # Expected output: 8
 ### Example Code
 
 ```python
-from pydllmanager import DLLLoader, DllImprt
+from pydllmanager import DLLLoader, ctypes_type, LoaderLibrary
 
 # Using DLLLoader to load and call a function
 loader = DLLLoader("path/to/your/dll/file.dll")
-subtract_func = loader.get_function('subtract', [ctypes.c_int, ctypes.c_int], ctypes.c_int)
+subtract_func = loader.get_function('subtract', [ctypes_type(int), ctypes_type(int)], ctypes_type(int))
 result = subtract_func(10, 4)
 print(result)  # Expected output: 6 (depends on the DLL function)
 
+loader = LoaderLibrary("path/to/your/dll/file.dll")
+loader.load()
+
 # Using DllImprt decorator
-@DllImprt("path/to/your/dll/file.dll")
-def multiply(a: int, b: int) -> int:
-    pass
+@loader.include()
+def multiply(a: int, b: int) -> int: ...
 
 result = multiply(2, 3)
 print(result)  # Expected output: 6

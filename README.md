@@ -115,3 +115,5 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ---
 
 **Note**: Be sure to replace `"path/to/your/dll/file.dll"` with the actual path to your DLL file in the examples.
+
+thank you for using my project
